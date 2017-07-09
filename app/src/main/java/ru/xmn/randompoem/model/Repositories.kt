@@ -1,5 +1,7 @@
 package ru.xmn.randompoem.model
 
+import android.content.Context
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -7,6 +9,9 @@ import com.google.firebase.database.ValueEventListener
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Single
+import ru.xmn.randompoem.application.App
+import ru.xmn.randompoem.application.di.scopes.ActivityScope
+import javax.inject.Inject
 import javax.inject.Singleton
 
 interface PoemsRepository {
@@ -14,10 +19,13 @@ interface PoemsRepository {
     fun poets(): Single<List<Poet>>
 }
 
-class FirebasePoemsRepository : PoemsRepository {
+@ActivityScope
+public class FirebasePoemsRepository  @Inject constructor(context: Context) : PoemsRepository {
+
     var db: FirebaseDatabase
 
     init {
+        FirebaseApp.initializeApp(context)
         db = FirebaseDatabase.getInstance()
     }
 
@@ -67,7 +75,7 @@ class FirebasePoemsRepository : PoemsRepository {
 }
 
 @Module
-class PoemsNetworkModule(){
+class PoemsNetworkModule {
     @Provides @Singleton
-    fun providePoemsRepository():PoemsRepository = FirebasePoemsRepository()
+    fun providePoemsRepository(context: Context): PoemsRepository = FirebasePoemsRepository(context)
 }

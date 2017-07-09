@@ -8,7 +8,7 @@ import ru.xmn.randompoem.application.di.ApplicationComponent
 import ru.xmn.randompoem.application.di.ApplicationModule
 import ru.xmn.randompoem.application.di.DaggerApplicationComponent
 
-class App : Application() {
+public class App : Application() {
 
     companion object {
         lateinit var component: ApplicationComponent

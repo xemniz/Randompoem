@@ -2,6 +2,7 @@ package ru.xmn.randompoem.application.di
 
 import dagger.Component
 import ru.xmn.randompoem.model.PoemsNetworkModule
+import ru.xmn.randompoem.screens.RandomPoemsComponent
 import javax.inject.Singleton
 
 @Singleton
@@ -11,5 +12,6 @@ import javax.inject.Singleton
         PoemsNetworkModule::class
 ))
 interface ApplicationComponent{
+    fun randomPoemsComponent(): RandomPoemsComponent.Builder
 }
 
