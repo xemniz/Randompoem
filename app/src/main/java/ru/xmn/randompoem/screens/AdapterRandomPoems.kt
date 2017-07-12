@@ -30,7 +30,6 @@ class AdapterRandomPoems : RecyclerView.Adapter<AdapterRandomPoems.ViewHolder>()
         fun bind(poem: Poem) {
             itemView.itemPoemText.text = poem.text
         }
-
     }
 
 }
