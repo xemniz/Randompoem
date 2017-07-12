@@ -31,6 +31,8 @@ class PoemsLayout : LinearLayout {
     lateinit private var gestureListener: GestureDetector.SimpleOnGestureListener
     lateinit private var gestureDetector: GestureDetector
 
+    private var onSwipe: (() -> Unit)? = null
+
     private fun init() {
         orientation = VERTICAL
 
@@ -42,7 +44,19 @@ class PoemsLayout : LinearLayout {
             return true
         }
 
+        fun performSwipe(): Boolean {
+            for (i in 0..childCount - 1) {
+                val view = getChildAt(i)
+                view.animate().translationX(-width.toFloat()).setDuration(200).start()
+            }
+            return true
+        }
+
         gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+            private val swipe_Min_Distance = 100
+            private val swipe_Max_Distance get() = width
+            private val swipe_Min_Velocity = 100
+
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
                 if (distanceX < 0) return false
                 val firstView = getChildAt(0)
@@ -58,8 +72,27 @@ class PoemsLayout : LinearLayout {
                 return false
             }
 
-            override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-                return bounceBack()
+            override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                val xDistance = Math.abs(e1.getX() - e2.getX())
+                val yDistance = Math.abs(e1.getY() - e2.getY())
+
+                if (xDistance > this.swipe_Max_Distance || yDistance > this.swipe_Max_Distance)
+                    return false
+
+                val velX = Math.abs(velocityX)
+                var result = false
+
+                if (velX > this.swipe_Min_Velocity && xDistance > this.swipe_Min_Distance) {
+                    if (e1.getX() > e2.getX())
+                    // right to left
+                    {
+                        onSwipe?.invoke()
+                        performSwipe()
+                    }
+                    result = true
+                }
+
+                return result
             }
 
             override fun onSingleTapUp(e: MotionEvent): Boolean {
