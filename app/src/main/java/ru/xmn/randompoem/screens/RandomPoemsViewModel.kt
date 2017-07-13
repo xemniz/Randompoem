@@ -64,7 +64,7 @@ class RandomPoemsInteractor @Inject constructor(val poemsRepository: PoemsReposi
 
 public fun <T> List<T>.randomItem(): T {
     val r = Random()
-    return this[r.nextInt(this.size - 1)]
+    return if (this.size - 1 == 0) this[r.nextInt(this.size - 1)] else this[0]
 }
 
 @Module
