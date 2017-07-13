@@ -24,6 +24,12 @@ class RandomPoemsViewModel : ViewModel(){
     val randomPoems: MutableLiveData<List<Poem>> = MutableLiveData()
     init {
         App.component.randomPoemsComponent().provideModule(RandomPoemsModule()).build().inject(this)
+        randomPoems.value = emptyList()
+        filmsProvider.getRandomPoets()
+                .subscribe(Consumer { randomPoems.value = it.poems })
+    }
+
+    fun requestNewPoems() {
         filmsProvider.getRandomPoets()
                 .subscribe(Consumer { randomPoems.value = it.poems })
     }

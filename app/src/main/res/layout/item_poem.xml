@@ -12,23 +12,22 @@
         android:layout_marginRight="24dp"
         android:layout_marginTop="8dp"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="match_parent"
         android:layout_gravity="top"
         app:cardElevation="4dp"
         app:cardCornerRadius="6dp"
         app:cardBackgroundColor="@color/colorAccent">
 
         <TextView
+            android:textColor="@android:color/white"
             android:id="@+id/itemPoemText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_margin="16dp"
             android:textAlignment="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
             android:textSize="16sp"
-            android:visibility="gone"
             tools:text="Дымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\n"/>
     </android.support.v7.widget.CardView>
 </FrameLayout>

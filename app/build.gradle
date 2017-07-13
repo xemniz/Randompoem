@@ -58,6 +58,7 @@ dependencies {
     compile "android.arch.lifecycle:runtime:$archComp"
     compile "android.arch.lifecycle:extensions:$archComp"
     kapt "android.arch.lifecycle:compiler:$archComp"
+    compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
 
     compile 'com.squareup.retrofit2:converter-moshi:2.3.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
