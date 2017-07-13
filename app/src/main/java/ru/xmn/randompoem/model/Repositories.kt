@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Single
+import io.reactivex.functions.Cancellable
 import ru.xmn.randompoem.application.App
 import ru.xmn.randompoem.application.di.scopes.ActivityScope
 import javax.inject.Inject
@@ -20,7 +21,7 @@ interface PoemsRepository {
 }
 
 @ActivityScope
-public class FirebasePoemsRepository  @Inject constructor(context: Context) : PoemsRepository {
+public class FirebasePoemsRepository @Inject constructor(context: Context) : PoemsRepository {
 
     var db: FirebaseDatabase
 
@@ -31,24 +32,27 @@ public class FirebasePoemsRepository  @Inject constructor(context: Context) : Po
 
     override fun poetWithPoems(poet: Poet): Single<Poet> {
         return Single.create<Poet> {
-            db.getReference("poems/${poet.id}").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot?) {
-                    val list = (snapshot?.children ?: emptyList()).map { toPoem(it) }.filter { it != null }.map { it!! }
-                    it.onSuccess(poet.copy(poems = list))
-                }
+                println("poetWithPoems ${it.isDisposed}")
 
-                override fun onCancelled(error: DatabaseError) {
-                    it.onError(error.toException())
-                }
+                db.getReference("poems/${poet.id}").addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot?) {
+                        val list = (snapshot?.children ?: emptyList()).map { toPoem(it) }.filter { it != null }.map { it!! }
+                        it.onSuccess(poet.copy(poems = list))
+                        println("poetWithPoems onDataChange")
+                    }
 
-                private fun toPoem(snapshot: DataSnapshot?): Poem? {
-                    val poemFB = snapshot?.getValue(PoemFB::class.java)
-                    if (poemFB?.id == null || poemFB?.title == null || poemFB?.text == null) return null
-                    return Poem(poemFB.id, poet.copy(), poemFB?.title, poemFB?.text, "")
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        it.onError(error.toException())
+                    }
 
-        }
+                    private fun toPoem(snapshot: DataSnapshot?): Poem? {
+                        val poemFB = snapshot?.getValue(PoemFB::class.java)
+                        if (poemFB?.id == null || poemFB?.title == null || poemFB?.text == null) return null
+                        return Poem(poemFB.id, poet.copy(), poemFB?.title, poemFB?.text, "")
+                    }
+                })
+            }
+
     }
 
     override fun poets(): Single<List<Poet>> {

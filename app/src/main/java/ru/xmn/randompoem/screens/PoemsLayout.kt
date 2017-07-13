@@ -1,25 +1,21 @@
 package ru.xmn.randompoem.screens
 
 import android.content.Context
-import android.graphics.Color
-import android.provider.CalendarContract
+import android.graphics.drawable.AnimationDrawable
 import android.support.animation.DynamicAnimation
 import android.support.animation.FlingAnimation
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.item_poem.view.*
 import ru.xmn.randompoem.R
 import ru.xmn.randompoem.common.extensions.inflate
+import ru.xmn.randompoem.common.utils.ToolbarUtils.actionBarHeight
 import ru.xmn.randompoem.model.Poem
 
 
@@ -37,25 +33,13 @@ class PoemsLayout : FrameLayout {
     }
 
     val linearLayout = LinearLayout(context)
-    val shimmerLayout = ShimmerFrameLayout(context)
+    val shimmerLayout = FrameLayout(context)
     val itemCount: Int = 3
     var onSwipe: (() -> Unit)? = null
 
     private fun init() {
-        shimmerLayout.addView(ImageView(context).apply {
-            setImageResource(android.R.drawable.ic_media_next)
-//            setBackgroundColor(Color.LTGRAY)
-            layoutParams = ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        })
-        shimmerLayout.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        shimmerLayout.setBackgroundColor(Color.WHITE)
-        shimmerLayout.baseAlpha = 0f
-        addView(shimmerLayout)
-        shimmerLayout.startShimmerAnimation()
-
-        linearLayout.orientation = LinearLayout.VERTICAL
-        linearLayout.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        addView(linearLayout)
+        setupLoadingLayout()
+        setupPoemsLayout()
 
         fun bounceBack(): Boolean {
             for (i in 0..linearLayout.childCount - 1) {
@@ -76,7 +60,7 @@ class PoemsLayout : FrameLayout {
                 }
                 fling.setStartVelocity(-velocityNormalized)
                         .setMinValue(Float.NEGATIVE_INFINITY)
-                        .setMaxValue(0f)
+                        .setMaxValue(Float.POSITIVE_INFINITY)
                         .setFriction(.9f)
                         .addEndListener(object : DynamicAnimation.OnAnimationEndListener {
                             override fun onAnimationEnd(animation: DynamicAnimation<out DynamicAnimation<*>>?, canceled: Boolean, value: Float, velocity: Float) {
@@ -97,7 +81,9 @@ class PoemsLayout : FrameLayout {
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
                 if (distanceX < 0) return false
                 val firstView = linearLayout.getChildAt(0)
-                firstView.translationX -= distanceX
+                firstView?.let {
+                    it.translationX -= distanceX
+                }
 
                 for (i in 1..linearLayout.childCount - 1) {
                     val view = linearLayout.getChildAt(i)
@@ -122,7 +108,8 @@ class PoemsLayout : FrameLayout {
                 if (velX > this.swipe_Min_Velocity && xDistance > this.swipe_Min_Distance) {
                     if (e1.getX() > e2.getX())
                     // right to left
-                    {                                    requestNewItems()
+                    {
+                        requestNewItems()
 
                         performSwipe(velX)
                     }
@@ -154,9 +141,26 @@ class PoemsLayout : FrameLayout {
         }
     }
 
+    private fun setupLoadingLayout() {
+        shimmerLayout.background = context.getDrawable(R.drawable.animation_list)
+        val anim = shimmerLayout.getBackground() as AnimationDrawable
+        anim.setEnterFadeDuration(600)
+        anim.setExitFadeDuration(600)
+        anim.start()
+        addView(shimmerLayout)
+    }
+
+    private fun setupPoemsLayout() {
+        val actionBarHeight = actionBarHeight(context)
+        linearLayout.setPadding(0, actionBarHeight, 0, 0)
+        linearLayout.orientation = LinearLayout.VERTICAL
+        linearLayout.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        addView(linearLayout)
+    }
+
     private fun requestNewItems() {
         onSwipe?.invoke()
-        shimmerLayout.visible()
+        shimmerLayout.startAnim()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -167,15 +171,20 @@ class PoemsLayout : FrameLayout {
     fun setPoems(poems: List<Poem>) {
         linearLayout.removeAllViews()
         if (poems.isEmpty()) {
-            shimmerLayout.visible()
+            shimmerLayout.startAnim()
         } else {
-            shimmerLayout.invisible()
+            shimmerLayout.stopAnim()
             poems.take(itemCount)
                     .withIndex()
                     .forEach { (index, poem) ->
                         val view = inflate(R.layout.item_poem)
-                        view.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, height / itemCount)
-                        view.translationX = (height * 1.2).toFloat()
+                        val param = LinearLayout.LayoutParams(
+                                FrameLayout.LayoutParams.MATCH_PARENT,
+                                FrameLayout.LayoutParams.MATCH_PARENT,
+                                1.0f
+                        )
+                        view.layoutParams = param
+                        view.translationX = (width * 1.2).toFloat()
                         linearLayout.addView(view)
                         bind(view, poem)
                         view.animate().translationX(0f).setStartDelay((index * 80).toLong()).setDuration(300).setInterpolator(DecelerateInterpolator(1.5f)).start()
@@ -190,14 +199,16 @@ class PoemsLayout : FrameLayout {
 
 }
 
-private fun View.visible() {
+private fun View.startAnim() {
     this.visibility = View.VISIBLE
+    val anim = this.getBackground() as AnimationDrawable
+    anim.start()
+
 }
-private fun View.invisible() {
-    this.visibility = View.INVISIBLE
-}
-private fun View.gone() {
-    this.visibility = View.GONE
+
+private fun View.stopAnim() {
+    val anim = this.getBackground() as AnimationDrawable
+    anim.stop()
 }
 
 
