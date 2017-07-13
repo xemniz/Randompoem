@@ -5,12 +5,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "ru.xmn.randompoem"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -34,8 +34,8 @@ dependencies {
     ext.dagger_version = "2.10"
     ext.retrofitVersion = "2.2.0"
     ext.okhttpVersion = "3.7.0"
-    ext.supportLib = "25.4.0"
-    ext.archComp = "1.0.0-alpha3"
+    ext.supportLib = "26.0.0-beta2"
+    ext.archComp = "1.0.0-alpha4"
 
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -47,6 +47,7 @@ dependencies {
     compile "com.android.support:design:$supportLib"
     compile "com.android.support:palette-v7:$supportLib"
     compile "com.android.support:transition:$supportLib"
+    compile "com.android.support:support-dynamic-animation:$supportLib"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

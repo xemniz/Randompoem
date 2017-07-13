@@ -12,6 +12,10 @@ import ru.xmn.randompoem.R
 import ru.xmn.randompoem.common.extensions.inflate
 import ru.xmn.randompoem.model.Poem
 import kotlinx.android.synthetic.main.item_poem.view.*
+import android.view.ViewConfiguration
+import android.support.animation.DynamicAnimation
+import android.support.animation.FlingAnimation
+
 
 class PoemsLayout : LinearLayout {
     constructor(context: Context) : super(context) {
@@ -26,11 +30,7 @@ class PoemsLayout : LinearLayout {
         init()
     }
 
-    private var poems: List<Poem>? = null
     val itemCount: Int = 3
-    lateinit private var gestureListener: GestureDetector.SimpleOnGestureListener
-    lateinit private var gestureDetector: GestureDetector
-
     private var onSwipe: (() -> Unit)? = null
 
     private fun init() {
@@ -44,15 +44,27 @@ class PoemsLayout : LinearLayout {
             return true
         }
 
-        fun performSwipe(): Boolean {
+        fun performSwipe(velocity: Float = 0f): Boolean {
+            val duration = if (velocity > 50) (width / velocity * 100).toLong() else 200
+
             for (i in 0..childCount - 1) {
                 val view = getChildAt(i)
-                view.animate().translationX(-width.toFloat()).setDuration(200).start()
+                val fling = FlingAnimation(view, DynamicAnimation.TRANSLATION_X)
+                val minVel = 5000f
+                val velocityNormalized = when {
+                    velocity < minVel -> minVel
+                    else -> velocity
+                }
+                fling.setStartVelocity(-velocityNormalized)
+                        .setMinValue(Float.NEGATIVE_INFINITY)
+                        .setMaxValue(0f)
+                        .setFriction(.9f)
+                        .start();
             }
             return true
         }
 
-        gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
             private val swipe_Min_Distance = 100
             private val swipe_Max_Distance get() = width
             private val swipe_Min_Velocity = 100
@@ -64,7 +76,7 @@ class PoemsLayout : LinearLayout {
 
                 for (i in 1..childCount - 1) {
                     val view = getChildAt(i)
-                    val shiftCoef = .2
+                    val shiftCoef = .1
                     val translationTmp = firstView.translationX - distanceX + view.width * shiftCoef * i
                     val translation = if (translationTmp > 0) 0f else translationTmp.toFloat()
                     view.translationX = translation
@@ -87,7 +99,7 @@ class PoemsLayout : LinearLayout {
                     // right to left
                     {
                         onSwipe?.invoke()
-                        performSwipe()
+                        performSwipe(velX)
                     }
                     result = true
                 }
@@ -100,7 +112,7 @@ class PoemsLayout : LinearLayout {
             }
         }
 
-        gestureDetector = object : GestureDetector(context, gestureListener) {
+        val gestureDetector = object : GestureDetector(context, gestureListener) {
             override fun onTouchEvent(ev: MotionEvent): Boolean {
                 if (ev.action == MotionEvent.ACTION_UP) {
                     bounceBack()
