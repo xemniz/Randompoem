@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,13 +10,24 @@
 
     <ru.xmn.randompoem.screens.PoemsLayout
         android:id="@+id/listRandomPoems"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar">
+
+        <FrameLayout
+            android:id="@+id/poemsLoadingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/poemsListLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?actionBarSize"
+            android:orientation="vertical" />
     </ru.xmn.randompoem.screens.PoemsLayout>
 
 
@@ -30,4 +41,4 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>

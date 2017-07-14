@@ -14,11 +14,11 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.item_poem.view.*
 import mu.KLogging
 import ru.xmn.randompoem.R
 import ru.xmn.randompoem.common.extensions.*
-import ru.xmn.randompoem.common.utils.ToolbarUtils.actionBarHeight
 import ru.xmn.randompoem.model.Poem
 
 
@@ -37,34 +37,35 @@ class PoemsLayout : FrameLayout {
         init()
     }
 
-    val linearLayout = LinearLayout(context)
-    val shimmerLayout = FrameLayout(context)
+    lateinit var linearLayout: LinearLayout
+    lateinit var shimmerLayout: FrameLayout
     val itemCount: Int = 3
     var onSwipe: (() -> Unit)? = null
     private val SHOW_ALL: Int = -1
     var extendedItem = SHOW_ALL
 
     private fun init() {
+    }
+
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+
         setupLoadingLayout()
         setupPoemsLayout()
         setupGestureDetection()
     }
 
     private fun setupLoadingLayout() {
+        shimmerLayout = poemsLoadingLayout
         shimmerLayout.background = context.getDrawable(R.drawable.animation_list)
         val anim = shimmerLayout.getBackground() as AnimationDrawable
         anim.setEnterFadeDuration(600)
         anim.setExitFadeDuration(600)
         anim.start()
-        addView(shimmerLayout)
     }
 
     private fun setupPoemsLayout() {
-        val actionBarHeight = actionBarHeight(context)
-        linearLayout.setPadding(0, actionBarHeight, 0, 0)
-        linearLayout.orientation = LinearLayout.VERTICAL
-        linearLayout.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        addView(linearLayout)
+        linearLayout = poemsListLayout
     }
 
     private fun setupGestureDetection() {
