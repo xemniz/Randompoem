@@ -1,5 +1,7 @@
 package ru.xmn.randompoem.screens
 
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable
 import android.support.animation.DynamicAnimation
@@ -12,6 +14,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.view.*
@@ -58,7 +61,7 @@ class PoemsLayout : FrameLayout {
     private fun setupLoadingLayout() {
         shimmerLayout = poemsLoadingLayout
         shimmerLayout.background = context.getDrawable(R.drawable.animation_list)
-        val anim = shimmerLayout.getBackground() as AnimationDrawable
+        val anim = shimmerLayout.background as AnimationDrawable
         anim.setEnterFadeDuration(600)
         anim.setExitFadeDuration(600)
         anim.start()
@@ -70,7 +73,7 @@ class PoemsLayout : FrameLayout {
 
     private fun setupGestureDetection() {
         fun bounceBack(): Boolean {
-            for (i in 0..linearLayout.childCount - 1) {
+            (0..linearLayout.childCount - 1).forEach { i ->
                 val view = linearLayout.getChildAt(i)
                 view.animate().translationX(0f).setDuration(300).setInterpolator(AccelerateDecelerateInterpolator()).start()
             }
@@ -90,13 +93,11 @@ class PoemsLayout : FrameLayout {
                         .setMinValue(Float.NEGATIVE_INFINITY)
                         .setMaxValue(Float.POSITIVE_INFINITY)
                         .setFriction(.9f)
-                        .addEndListener(object : DynamicAnimation.OnAnimationEndListener {
-                            override fun onAnimationEnd(animation: DynamicAnimation<out DynamicAnimation<*>>?, canceled: Boolean, value: Float, velocity: Float) {
-                                if (i == linearLayout.childCount - 1) {
-                                }
+                        .addEndListener { _, _, _, _ ->
+                            if (i == linearLayout.childCount - 1) {
                             }
-                        })
-                        .start();
+                        }
+                        .start()
             }
             return true
         }
@@ -124,8 +125,8 @@ class PoemsLayout : FrameLayout {
             }
 
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-                val xDistance = Math.abs(e1.getX() - e2.getX())
-                val yDistance = Math.abs(e1.getY() - e2.getY())
+                val xDistance = Math.abs(e1.x - e2.x)
+                val yDistance = Math.abs(e1.y - e2.y)
 
                 if (xDistance > this.swipe_Max_Distance || yDistance > this.swipe_Max_Distance)
                     return false
@@ -134,7 +135,7 @@ class PoemsLayout : FrameLayout {
                 var result = false
 
                 if (velX > this.swipe_Min_Velocity && xDistance > this.swipe_Min_Distance) {
-                    if (e1.getX() > e2.getX())
+                    if (e1.x > e2.x)
                     // right to left
                     {
                         requestNewItems()
@@ -165,7 +166,7 @@ class PoemsLayout : FrameLayout {
             }
         }
 
-        setOnTouchListener { v, event ->
+        setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 bounceBack()
             }
@@ -184,8 +185,8 @@ class PoemsLayout : FrameLayout {
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return when {
-            extendedItem == SHOW_ALL -> true
+        return when (extendedItem) {
+            SHOW_ALL -> true
             else -> {
                 false
             }
@@ -243,13 +244,39 @@ class PoemsLayout : FrameLayout {
                 .addTransition(slideAndBounds)
                 .setOrdering(TransitionSet.ORDERING_SEQUENTIAL)
 
+        finalSet.addListener(object : Transition.TransitionListener {
+            override fun onTransitionEnd(p0: Transition?) {
+                linearLayout.views.forEach { view ->
+                    ValueAnimator.ofInt(view.itemPoemScroll.scrollY, 0).apply {
+                        addUpdateListener { view.itemPoemScroll.scrollY = it.getAnimatedValue() as Int }
+                        setDuration(300)
+                        setInterpolator(AccelerateDecelerateInterpolator())
+                        start()
+                    }
+                }
+            }
+
+            override fun onTransitionResume(p0: Transition?) {
+            }
+
+            override fun onTransitionPause(p0: Transition?) {
+            }
+
+            override fun onTransitionCancel(p0: Transition?) {
+            }
+
+            override fun onTransitionStart(p0: Transition?) {
+            }
+        })
+
         TransitionManager.beginDelayedTransition(this, finalSet)
-        this.linearLayout.views.forEach {
-            if (it.visibility == View.VISIBLE) {
-                it.itemPoemAuthor.gone()
-                it.itemPoemTitle.gone()
+
+        this.linearLayout.views.forEach { view ->
+            if (view.visibility == View.VISIBLE) {
+                view.itemPoemAuthor.gone()
+                view.itemPoemTitle.gone()
             } else
-                it.visible()
+                view.visible()
         }
     }
 
@@ -270,26 +297,24 @@ class PoemsLayout : FrameLayout {
                     it.value.itemPoemTitle.visible()
                 }
             }
-            itemPoemScroll.scrollY = 0
-            itemPoemScroll.scrollTo(0, 0)
         }
     }
 
     private fun provideSlideAndBoundsTransition(index: Int): TransitionSet {
         val slideAndBounds = this.linearLayout.views.withIndex()
                 .fold(TransitionSet(), {
-                    s: TransitionSet, i: IndexedValue<View> ->
+                    s: TransitionSet, (i, value) ->
                     when {
-                        i.index < index -> {
+                        i < index -> {
                             s.addTransition(Slide().apply {
                                 slideEdge = Gravity.TOP
-                                addTarget(i.value)
+                                addTarget(value)
                             })
                         }
-                        i.index > index -> {
+                        i > index -> {
                             s.addTransition(Slide().apply {
                                 slideEdge = Gravity.BOTTOM
-                                addTarget(i.value)
+                                addTarget(value)
                             })
                         }
                         else -> {
