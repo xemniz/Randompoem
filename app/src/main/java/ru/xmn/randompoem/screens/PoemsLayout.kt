@@ -1,5 +1,6 @@
 package ru.xmn.randompoem.screens
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable
 import android.support.animation.DynamicAnimation
@@ -14,6 +15,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.item_poem.view.*
 import mu.KLogging
@@ -49,14 +51,11 @@ class PoemsLayout : FrameLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-
-        setupLoadingLayout()
-        setupPoemsLayout()
         setupGestureDetection()
     }
 
-    private fun setupLoadingLayout() {
-        shimmerLayout = poemsLoadingLayout
+    fun setupLoadingLayout(shimmerLayout: FrameLayout) {
+        this.shimmerLayout = shimmerLayout
         shimmerLayout.background = context.getDrawable(R.drawable.animation_list)
         val anim = shimmerLayout.getBackground() as AnimationDrawable
         anim.setEnterFadeDuration(600)
@@ -64,8 +63,8 @@ class PoemsLayout : FrameLayout {
         anim.start()
     }
 
-    private fun setupPoemsLayout() {
-        linearLayout = poemsListLayout
+    fun setupPoemsLayout(linearLayout: LinearLayout) {
+        this.linearLayout = linearLayout
     }
 
     private fun setupGestureDetection() {

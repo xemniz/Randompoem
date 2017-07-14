@@ -18,6 +18,8 @@ class MainActivity : LifecycleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        listRandomPoems.setupLoadingLayout(poemsLoadingLayout)
+        listRandomPoems.setupPoemsLayout(poemsListLayout)
         setActionBar(toolbar)
         actionBar.title = "Random poem"
         toolbar.setPadding(0, statusBarHeight(this), 0, 0);
@@ -32,6 +34,88 @@ class MainActivity : LifecycleActivity() {
     fun bindUi(it: List<Poem>?) {
         listRandomPoems.setPoems(it ?: emptyList())
         listRandomPoems.onSwipe = {randomPoemsViewModel.requestNewPoems()}
+//        text.text =
+//"""sadf
+//asdf
+//sadf
+//asdf
+//sadf
+//sadf
+//sadf
+//sad
+//sad
+//sdfa
+//sadf
+//sadf
+//sadf
+//asdf
+//asdf
+//fsda
+//sfad
+//sfa
+//sfad
+//sfa
+//sfa
+//sfa
+//sfad
+//ssa
+//sfa
+//sadf
+//dsaf
+//sfadasdf
+//sadf
+//asdf
+//sadf
+//sadf
+//sadf
+//sad
+//sad
+//sdfa
+//sadf
+//sadf
+//sadf
+//asdf
+//asdf
+//fsda
+//sfad
+//sfa
+//sfad
+//sfa
+//sfa
+//sfa
+//sfad
+//ssa
+//sfa
+//sadf
+//dsaf
+//sfadasdf
+//sadf
+//asdf
+//sadf
+//sadf
+//sadf
+//sad
+//sad
+//sdfa
+//sadf
+//sadf
+//sadf
+//asdf
+//asdf
+//fsda
+//sfad
+//sfa
+//sfad
+//sfa
+//sfa
+//sfa
+//sfad
+//ssa
+//sfa
+//sadf
+//dsaf
+//sfad
+//sfad"""
     }
 }
 

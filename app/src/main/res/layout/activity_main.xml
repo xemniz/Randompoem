@@ -7,8 +7,22 @@
     android:layout_height="match_parent"
     tools:context="ru.xmn.randompoem.screens.MainActivity">
 
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:paddingTop="?actionBarSize">-->
+        <!--<ScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+            <!--<TextView-->
+                <!--android:id="@+id/text"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"/>-->
+        <!--</ScrollView>-->
+    <!--</FrameLayout>-->
 
     <ru.xmn.randompoem.screens.PoemsLayout
+        android:visibility="visible"
         android:id="@+id/listRandomPoems"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,20 +30,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar">
-
-        <FrameLayout
-            android:id="@+id/poemsLoadingLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:id="@+id/poemsListLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?actionBarSize"
-            android:orientation="vertical" />
     </ru.xmn.randompoem.screens.PoemsLayout>
 
+    <FrameLayout
+        android:id="@+id/poemsLoadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/poemsListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        android:orientation="vertical" />
 
     <android.widget.Toolbar
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
