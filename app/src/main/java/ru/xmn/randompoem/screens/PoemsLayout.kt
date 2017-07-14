@@ -187,7 +187,6 @@ class PoemsLayout : FrameLayout {
         return when {
             extendedItem == SHOW_ALL -> true
             else -> {
-                linearLayout.getChildAt(extendedItem).dispatchTouchEvent(ev)
                 false
             }
         }
