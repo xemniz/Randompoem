@@ -195,6 +195,8 @@ class PoemsLayout : FrameLayout {
 
     private fun bind(view: View, poem: Poem) {
         view.itemPoemText.text = poem.text
+        view.poemScroll.setOnTouchListener(View.OnTouchListener { v, event -> true });
+        view.poemScroll.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY)
     }
 
 }

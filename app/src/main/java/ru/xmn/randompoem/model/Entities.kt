@@ -12,6 +12,7 @@ class PoetFB {
 
 class PoemFB {
     val id: String? = null
+    val year: String? = null
     val poet: Poet? = null
     val title: String? = null
     val text: String? = null
