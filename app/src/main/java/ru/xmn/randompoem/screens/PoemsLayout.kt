@@ -1,20 +1,17 @@
 package ru.xmn.randompoem.screens
 
-import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable
 import android.support.animation.DynamicAnimation
 import android.support.animation.FlingAnimation
+import android.support.v4.widget.NestedScrollView
 import android.transition.*
 import android.util.AttributeSet
-import android.view.GestureDetector
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.view.*
@@ -62,8 +59,8 @@ class PoemsLayout : FrameLayout {
         shimmerLayout = poemsLoadingLayout
         shimmerLayout.background = context.getDrawable(R.drawable.animation_list)
         val anim = shimmerLayout.background as AnimationDrawable
-        anim.setEnterFadeDuration(600)
-        anim.setExitFadeDuration(600)
+        anim.setEnterFadeDuration(1000)
+        anim.setExitFadeDuration(1000)
         anim.start()
     }
 
@@ -200,27 +197,30 @@ class PoemsLayout : FrameLayout {
 
     fun setPoems(poems: List<Poem>) {
         linearLayout.removeAllViews()
-        if (poems.isEmpty()) {
-            shimmerLayout.startAnim()
-        } else {
-            shimmerLayout.stopAnim()
-            poems.take(itemCount)
-                    .withIndex()
-                    .forEach { (index, poem) ->
-                        val view = inflate(R.layout.item_poem)
-                        val param = LinearLayout.LayoutParams(
-                                FrameLayout.LayoutParams.MATCH_PARENT,
-                                FrameLayout.LayoutParams.MATCH_PARENT,
-                                1f
-                        )
-                        view.layoutParams = param
-                        view.translationX = (width * 1.2).toFloat()
-                        linearLayout.addView(view)
-                        bind(view, poem)
-                        view.animate().translationX(0f).setStartDelay((index * 80).toLong()).setDuration(300).setInterpolator(DecelerateInterpolator(1.5f)).start()
-                    }
+        when {
+            poems.isEmpty() -> shimmerLayout.startAnim()
+            else -> {
+                shimmerLayout.stopAnim()
+                poems.take(itemCount)
+                        .withIndex()
+                        .forEach { (index, poem) -> animateItemAppearing(poem, index) }
+            }
         }
 
+    }
+
+    private fun animateItemAppearing(poem: Poem, index: Int) {
+        val view = inflate(R.layout.item_poem)
+        val param = LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT,
+                1f
+        )
+        view.layoutParams = param
+        view.translationX = (width * 1.2).toFloat()
+        linearLayout.addView(view)
+        bind(view, poem)
+        view.animate().translationX(0f).setStartDelay((index * 80).toLong()).setDuration(300).setInterpolator(DecelerateInterpolator(1.5f)).start()
     }
 
     private fun bind(view: View, poem: Poem) {
@@ -246,14 +246,6 @@ class PoemsLayout : FrameLayout {
 
         finalSet.addListener(object : Transition.TransitionListener {
             override fun onTransitionEnd(p0: Transition?) {
-                linearLayout.views.forEach { view ->
-                    ValueAnimator.ofInt(view.itemPoemScroll.scrollY, 0).apply {
-                        addUpdateListener { view.itemPoemScroll.scrollY = it.getAnimatedValue() as Int }
-                        setDuration(300)
-                        setInterpolator(AccelerateDecelerateInterpolator())
-                        start()
-                    }
-                }
             }
 
             override fun onTransitionResume(p0: Transition?) {
@@ -266,17 +258,31 @@ class PoemsLayout : FrameLayout {
             }
 
             override fun onTransitionStart(p0: Transition?) {
+                linearLayout.views.forEach { view -> scrollTop(view.itemPoemScroll) }
             }
         })
 
         TransitionManager.beginDelayedTransition(this, finalSet)
 
         this.linearLayout.views.forEach { view ->
+
+            view.itemPoemCard.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+
             if (view.visibility == View.VISIBLE) {
                 view.itemPoemAuthor.gone()
                 view.itemPoemTitle.gone()
-            } else
+            } else {
                 view.visible()
+            }
+        }
+    }
+
+    private fun scrollTop(view: NestedScrollView) {
+        ValueAnimator.ofInt(view.scrollY, 0).apply {
+            addUpdateListener { view.scrollY = it.getAnimatedValue() as Int }
+            setDuration(300)
+            interpolator = AccelerateInterpolator(1.5f)
+            start()
         }
     }
 
@@ -293,6 +299,7 @@ class PoemsLayout : FrameLayout {
                 if (it.index != index)
                     it.value.gone()
                 else {
+                    it.value.itemPoemCard.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                     it.value.itemPoemAuthor.visible()
                     it.value.itemPoemTitle.visible()
                 }

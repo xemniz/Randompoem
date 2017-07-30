@@ -18,10 +18,16 @@ class MainActivity : LifecycleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupToolbar()
+        setupViewModel()
+    }
+
+    private fun setupToolbar() {
         setActionBar(toolbar)
         actionBar.title = "Random poem"
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, statusBarHeight(this), 0, 0);
-        setupViewModel()
     }
 
     private fun setupViewModel() {
