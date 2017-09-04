@@ -1,6 +1,6 @@
 package ru.xmn.randompoem.model
 
-data class Poet(val id: String, val name: String, val century: Int?, var poems: List<Poem>?)
+data class Poet(val id: String, val name: String, val century: Int, var poems: List<Poem>?)
 data class Poem(val id: String, val poet: Poet?, val title: String, val text: String, val year: String)
 
 class PoetFB {

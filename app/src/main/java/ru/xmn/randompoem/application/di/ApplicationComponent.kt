@@ -3,6 +3,7 @@ package ru.xmn.randompoem.application.di
 import dagger.Component
 import ru.xmn.randompoem.model.PoemsNetworkModule
 import ru.xmn.randompoem.screens.RandomPoemsComponent
+import ru.xmn.randompoem.screens.catalog.CatalogViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -13,5 +14,6 @@ import javax.inject.Singleton
 ))
 interface ApplicationComponent{
     fun randomPoemsComponent(): RandomPoemsComponent.Builder
+    fun inject(catalogViewModel: CatalogViewModel)
 }
 

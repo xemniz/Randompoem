@@ -17,6 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".screens.RandomPoemsActivity"
+            android:label="@string/title_activity_random_poems"
+            android:theme="@style/AppTheme.ActionBar.Transparent.NoActionBar">
+        </activity>
+        <activity android:name=".screens.catalog.CatalogActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -20,8 +20,7 @@ interface PoemsRepository {
     fun poets(): Single<List<Poet>>
 }
 
-@ActivityScope
-public class FirebasePoemsRepository @Inject constructor(context: Context) : PoemsRepository {
+public class FirebasePoemsRepository constructor(context: Context) : PoemsRepository {
 
     var db: FirebaseDatabase
 
@@ -47,8 +46,8 @@ public class FirebasePoemsRepository @Inject constructor(context: Context) : Poe
 
                     private fun toPoem(snapshot: DataSnapshot?): Poem? {
                         val poemFB = snapshot?.getValue(PoemFB::class.java)
-                        if (poemFB?.id == null || poemFB?.title == null || poemFB?.text == null) return null
-                        return Poem(poemFB.id, poet.copy(), poemFB?.title, poemFB?.text, "")
+                        if (poemFB?.id == null || poemFB.title == null || poemFB.text == null) return null
+                        return Poem(poemFB.id, poet.copy(), poemFB.title, poemFB.text, "")
                     }
                 })
             }
@@ -67,10 +66,10 @@ public class FirebasePoemsRepository @Inject constructor(context: Context) : Poe
                     it.onError(error.toException())
                 }
 
-                private fun toPoet(it: DataSnapshot?): Poet? {
-                    val poetFb = it?.getValue(PoetFB::class.java)
-                    if (poetFb?.id == null || poetFb?.name == null) return null
-                    return Poet(poetFb.id, poetFb.name, poetFb?.century, emptyList())
+                private fun toPoet(item: DataSnapshot): Poet? {
+                    val poetFb = item.getValue(PoetFB::class.java)
+                    if (poetFb?.id == null || poetFb.name == null) return null
+                    return Poet(poetFb.id, poetFb.name, poetFb.century?:0, emptyList())
                 }
 
             })
