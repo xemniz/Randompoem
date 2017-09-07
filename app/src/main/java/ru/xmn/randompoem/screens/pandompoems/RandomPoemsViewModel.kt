@@ -1,4 +1,4 @@
-package ru.xmn.randompoem.screens
+package ru.xmn.randompoem.screens.pandompoems
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
@@ -78,6 +78,6 @@ interface RandomPoemsComponent {
     @Subcomponent.Builder
     interface Builder {
         fun build(): RandomPoemsComponent
-        fun provideModule(r: RandomPoemsModule): RandomPoemsComponent.Builder
+        fun provideModule(r: RandomPoemsModule): Builder
     }
 }

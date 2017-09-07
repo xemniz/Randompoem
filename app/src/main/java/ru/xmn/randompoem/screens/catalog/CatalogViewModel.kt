@@ -42,20 +42,8 @@ sealed class CatalogState {
 }
 
 fun List<Poet>.toPoetViewItems(): List<PoetViewItem> {
-    val sorted = this.sortedBy { it.century }
-    return sorted.foldIndexed(ArrayList<PoetViewItem>(), { index, acc, poet ->
-        when {
-            index == 0 -> acc.apply {
-                add(PoetViewItem.HeaderPoetViewItem(poet.century ?: 0))
-                add(PoetViewItem.CommonPoetViewItem(poet.id, poet.name, poet.century ?: 0))
-            }
-            sorted[index - 1].century ?: 0 != (poet.century ?: 0) -> acc.apply {
-                add(PoetViewItem.HeaderPoetViewItem(poet.century ?: 0))
-                add(PoetViewItem.CommonPoetViewItem(poet.id, poet.name, poet.century ?: 0))
-            }
-            else -> acc.apply { add(PoetViewItem.CommonPoetViewItem(poet.id, poet.name, poet.century ?: 0)) }
-        }
-    })
+    val sorted = this.sortedBy { it.name }
+    return sorted.map { PoetViewItem.CommonPoetViewItem(it.id, it.name, it.century) }
 }
 
 sealed class PoetViewItem {

@@ -10,7 +10,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.ActionBar.Transparent">
-        <activity android:name=".screens.MainActivity">
+        <activity
+            android:name=".screens.pandompoems.RandomPoemsActivity"
+            android:label="@string/title_activity_random_poems"
+            android:theme="@style/AppTheme.ActionBar.Transparent.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -18,11 +22,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".screens.RandomPoemsActivity"
-            android:label="@string/title_activity_random_poems"
+            android:name=".screens.catalog.CatalogActivity"
             android:theme="@style/AppTheme.ActionBar.Transparent.NoActionBar">
-        </activity>
-        <activity android:name=".screens.catalog.CatalogActivity">
         </activity>
     </application>
 

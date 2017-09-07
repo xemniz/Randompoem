@@ -1,32 +1,41 @@
-package ru.xmn.randompoem.screens
+package ru.xmn.randompoem.screens.pandompoems
 
-import android.arch.lifecycle.LifecycleActivity
+import android.arch.lifecycle.LifecycleRegistry
+import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_main.*
+import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_random_poems.*
 import mu.KLogging
+import org.jetbrains.anko.startActivity
 import ru.xmn.randompoem.R
 import ru.xmn.randompoem.common.utils.ToolbarUtils.statusBarHeight
 import ru.xmn.randompoem.model.Poem
+import ru.xmn.randompoem.screens.catalog.CatalogActivity
 
-class RandomPoemsActivity : LifecycleActivity() {
+class RandomPoemsActivity : AppCompatActivity(), LifecycleRegistryOwner {
+    private val registry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): LifecycleRegistry {
+        return registry
+    }
+
     private lateinit var randomPoemsViewModel: RandomPoemsViewModel;
 
     companion object : KLogging()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_random_poems)
         setupToolbar()
         setupViewModel()
+        filterButton.setOnClickListener{startActivity<CatalogActivity>()}
     }
 
     private fun setupToolbar() {
-        setActionBar(toolbar)
-        actionBar.title = "Random poem"
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
+        setSupportActionBar(toolbar)
+        supportActionBar!!.title = "Random poem"
         toolbar.setPadding(0, statusBarHeight(this), 0, 0);
     }
 
@@ -37,6 +46,6 @@ class RandomPoemsActivity : LifecycleActivity() {
 
     fun bindUi(it: List<Poem>?) {
         listRandomPoems.setPoems(it ?: emptyList())
-        listRandomPoems.onSwipe = {randomPoemsViewModel.requestNewPoems()}
+        listRandomPoems.onSwipe = { randomPoemsViewModel.requestNewPoems() }
     }
 }

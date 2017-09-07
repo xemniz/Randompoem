@@ -2,7 +2,7 @@ package ru.xmn.randompoem.application.di
 
 import dagger.Component
 import ru.xmn.randompoem.model.PoemsNetworkModule
-import ru.xmn.randompoem.screens.RandomPoemsComponent
+import ru.xmn.randompoem.screens.pandompoems.RandomPoemsComponent
 import ru.xmn.randompoem.screens.catalog.CatalogViewModel
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package ru.xmn.randompoem.screens
+package ru.xmn.randompoem.screens.pandompoems
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -14,7 +14,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.activity_random_poems.view.*
 import kotlinx.android.synthetic.main.item_poem.view.*
 import mu.KLogging
 import ru.xmn.randompoem.R

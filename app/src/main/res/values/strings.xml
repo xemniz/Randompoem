@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Random poem</string>
     <string name="title_activity_random_poems">RandomPoemsActivity</string>
+    <string name="poets_list_title">Poets list</string>
 </resources>

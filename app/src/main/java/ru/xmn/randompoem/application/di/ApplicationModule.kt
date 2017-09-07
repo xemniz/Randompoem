@@ -4,7 +4,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.xmn.randompoem.application.App
-import ru.xmn.randompoem.screens.RandomPoemsComponent
+import ru.xmn.randompoem.screens.pandompoems.RandomPoemsComponent
 import javax.inject.Singleton
 
 
