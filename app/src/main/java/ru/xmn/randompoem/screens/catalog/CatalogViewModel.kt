@@ -2,21 +2,22 @@ package ru.xmn.randompoem.screens.catalog
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.reactivex.functions.Consumer
 import ru.xmn.randompoem.application.App
-import ru.xmn.randompoem.model.PoemsRepository
-import ru.xmn.randompoem.model.Poet
 import javax.inject.Inject
 
 class CatalogViewModel : ViewModel() {
 
     val poets: MutableLiveData<CatalogState> = MutableLiveData()
     @Inject
-    lateinit var poemsRepository: PoemsRepository
+    lateinit var catalogInteractor: CatalogInteractor
 
     init {
-        App.component.inject(this)
-        poemsRepository.poets()
+        App.component.catalogComponent().provideModule(CatalogModule()).build().inject(this)
+        load()
+    }
+
+    private fun load() {
+        catalogInteractor.getPoetsWithMarker()
                 .map<CatalogState> { CatalogState.Idle(it) }
                 .toFlowable()
                 .startWith(CatalogState.Loading())
@@ -25,11 +26,25 @@ class CatalogViewModel : ViewModel() {
                 }, { CatalogState.Error(it) })
     }
 
+    fun unignorePoet(it: String) {
+        catalogInteractor.unignorePoet(it)
+        load()
+    }
+    fun ignorePoet(it: String) {
+        catalogInteractor.ignorePoet(it)
+        load()
+    }
+
+    fun unignoreAllPoets() {
+        catalogInteractor.unignoreAllPoets()
+        load()
+    }
+
 }
 
 sealed class CatalogState {
-    class Idle(items: List<Poet>) : CatalogState() {
-        val poetViewItems: List<PoetViewItem> = items.toPoetViewItems()
+    class Idle(items: List<SelectablePoet>) : CatalogState() {
+        val poetViewItems: List<SelectablePoet> = items
     }
 
     class Loading() : CatalogState()
@@ -41,12 +56,3 @@ sealed class CatalogState {
     }
 }
 
-fun List<Poet>.toPoetViewItems(): List<PoetViewItem> {
-    val sorted = this.sortedBy { it.name }
-    return sorted.map { PoetViewItem.CommonPoetViewItem(it.id, it.name, it.century) }
-}
-
-sealed class PoetViewItem {
-    data class HeaderPoetViewItem(val name: Int) : PoetViewItem()
-    data class CommonPoetViewItem(val id: String, val name: String, val century: Int) : PoetViewItem()
-}

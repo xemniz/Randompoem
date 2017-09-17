@@ -1,4 +1,4 @@
-package ru.xmn.filmfilmfilm.common.extensions
+package ru.xmn.randompoem.common.extensions
 
 import mu.KLogger
 

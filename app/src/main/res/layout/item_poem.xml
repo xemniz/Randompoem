@@ -4,25 +4,26 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:orientation="vertical">
+             android:orientation="vertical"
+             tools:background="@color/colorPrimary">
 
     <android.support.v7.widget.CardView
-        android:layout_gravity="center"
         android:id="@+id/itemPoemCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardElevation="0dp"
+        app:cardBackgroundColor="#2affffff"
         app:cardCornerRadius="6dp"
-        app:cardBackgroundColor="#2affffff">
+        app:cardElevation="0dp">
 
         <android.support.v4.widget.NestedScrollView
+            android:id="@+id/itemPoemScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/itemPoemScroll"
             android:fillViewport="true"
             android:scrollbars="none">
 
@@ -30,45 +31,68 @@
                 android:id="@+id/itemPoemContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="?android:selectableItemBackground">
+                android:background="?android:selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/itemPoemTitle"
-                    android:textColor="@android:color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
                     android:textAlignment="center"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp"
-                    tools:text="Сергей Есенин"
-                    android:layout_marginTop="8dp"/>
+                    android:visibility="gone"
+                    tools:text="Сергей Есенин"/>
 
                 <TextView
-                    android:layout_marginTop="8dp"
                     android:id="@+id/itemPoemText"
-                    android:textColor="@android:color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:textAlignment="center"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-                    android:textSize="16sp"
-                    tools:text="Дымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\n" />
-
-                <TextView
-                    android:visibility="gone"
-                    android:id="@+id/itemPoemAuthor"
                     android:textColor="@android:color/white"
-                    android:layout_width="match_parent"
+                    android:textSize="16sp"
+                    tools:text="Дымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\nДымилась роща под горою\n"/>
+
+                <LinearLayout
+                    android:id="@+id/itemPoemAuthor"
+                    android:layout_gravity="end"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="viewEnd"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-                    android:textSize="14sp"
-                    tools:text="Сергей Есенин"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="16dp"/>
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:gravity="end"
+                    android:padding="16dp"
+                    android:background="?android:selectableItemBackground">
+
+                    <TextView
+                        android:id="@+id/itemPoemAuthorName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="8dp"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        tools:text="Сергей Есенин"/>
+
+                    <ImageView
+                        android:tint="@android:color/white"
+                        android:id="@+id/itemPoemAuthorIgnore"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/asl_trimclip_eye"
+                        android:textAlignment="viewEnd"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </LinearLayout>
+
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.v7.widget.CardView>

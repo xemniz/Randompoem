@@ -8,6 +8,7 @@ import android.support.animation.FlingAnimation
 import android.support.v4.widget.NestedScrollView
 import android.transition.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.item_poem.view.*
 import mu.KLogging
 import ru.xmn.randompoem.R
 import ru.xmn.randompoem.common.extensions.*
-import ru.xmn.randompoem.model.Poem
+import ru.xmn.randompoem.poetcommonbuisnesslogic.isEyeCrossed
 
 
 class PoemsLayout : FrameLayout {
@@ -41,6 +42,7 @@ class PoemsLayout : FrameLayout {
     lateinit var shimmerLayout: FrameLayout
     val itemCount: Int = 3
     var onSwipe: (() -> Unit)? = null
+    var ignorePoet: (String, Boolean) -> Unit = { _, _ -> }
     private val SHOW_ALL: Int = -1
     var extendedItem = SHOW_ALL
 
@@ -195,7 +197,7 @@ class PoemsLayout : FrameLayout {
         shimmerLayout.startAnim()
     }
 
-    fun setPoems(poems: List<Poem>) {
+    fun setPoems(poems: List<SelectablePoetWithPoem>) {
         linearLayout.removeAllViews()
         when {
             poems.isEmpty() -> shimmerLayout.startAnim()
@@ -209,7 +211,7 @@ class PoemsLayout : FrameLayout {
 
     }
 
-    private fun animateItemAppearing(poem: Poem, index: Int) {
+    private fun animateItemAppearing(poet: SelectablePoetWithPoem, index: Int) {
         val view = inflate(R.layout.item_poem)
         val param = LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT,
@@ -219,16 +221,31 @@ class PoemsLayout : FrameLayout {
         view.layoutParams = param
         view.translationX = (width * 1.2).toFloat()
         linearLayout.addView(view)
-        bind(view, poem)
+        bind(view, poet, ignorePoet)
         view.animate().translationX(0f).setStartDelay((index * 80).toLong()).setDuration(300).setInterpolator(DecelerateInterpolator(1.5f)).start()
     }
 
-    private fun bind(view: View, poem: Poem) {
+    private fun bind(view: View, selectablePoetWithPoem: SelectablePoetWithPoem, ignorePoet: (String, Boolean) -> Unit) {
+        val (poem, selectablePoet) = selectablePoetWithPoem
+        val (poet, isIgnored) = selectablePoet
         view.itemPoemText.text = poem.text
         view.itemPoemTitle.text = poem.title
-        view.itemPoemAuthor.text = poem.poet?.name
         view.itemPoemContent.setOnClickListener {
             collapseAllItems()
+        }
+        poet.apply {
+            view.itemPoemAuthorName.text = name
+            val itemPoemAuthorIgnore = view.itemPoemAuthorIgnore
+            itemPoemAuthorIgnore.isEyeCrossed = true
+            println(itemPoemAuthorIgnore.isEyeCrossed)
+            itemPoemAuthorIgnore.isEyeCrossed = !itemPoemAuthorIgnore.isEyeCrossed
+            println(itemPoemAuthorIgnore.isEyeCrossed)
+            assert(itemPoemAuthorIgnore.isEyeCrossed == false)
+            view.itemPoemAuthor.setOnClickListener {
+                ignorePoet(id, !itemPoemAuthorIgnore.isEyeCrossed)
+                itemPoemAuthorIgnore.isEyeCrossed = !itemPoemAuthorIgnore.isEyeCrossed
+                Log.d("", "${itemPoemAuthorIgnore.isEyeCrossed}, ${!itemPoemAuthorIgnore.isEyeCrossed}")
+            }
         }
     }
 
@@ -309,8 +326,7 @@ class PoemsLayout : FrameLayout {
 
     private fun provideSlideAndBoundsTransition(index: Int): TransitionSet {
         val slideAndBounds = this.linearLayout.views.withIndex()
-                .fold(TransitionSet(), {
-                    s: TransitionSet, (i, value) ->
+                .fold(TransitionSet(), { s: TransitionSet, (i, value) ->
                     when {
                         i < index -> {
                             s.addTransition(Slide().apply {

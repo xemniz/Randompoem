@@ -7,17 +7,11 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import kotlinx.android.synthetic.main.activity_catalog.*
-import kotlinx.android.synthetic.main.item_poet.view.*
-import ru.xmn.filmfilmfilm.common.ui.adapter.AutoUpdatableAdapter
 import ru.xmn.randompoem.R
-import ru.xmn.randompoem.common.extensions.inflate
-import ru.xmn.randompoem.common.utils.ToolbarUtils
-import kotlin.properties.Delegates
+import ru.xmn.randompoem.screens.catalog.poetlistrecyclerview.PoetListAdapter
+import ru.xmn.randompoem.screens.catalog.poetlistrecyclerview.PoetListItemAnimator
 
 class CatalogActivity : AppCompatActivity(), LifecycleRegistryOwner {
     private val registry = LifecycleRegistry(this)
@@ -33,21 +27,26 @@ class CatalogActivity : AppCompatActivity(), LifecycleRegistryOwner {
         setupToolbar()
         setupViewModel()
         setupRecyclerView()
+        selectAllButton.setOnClickListener{
+            catalogViewModel.unignoreAllPoets()
+        }
     }
 
     private fun setupRecyclerView() {
         poetRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@CatalogActivity)
-            adapter = PoetListAdapter()
+            adapter = PoetListAdapter(catalogViewModel::unignorePoet, catalogViewModel::ignorePoet)
+            itemAnimator = PoetListItemAnimator()
         }
     }
 
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = getString(R.string.poets_list_title)
-        supportActionBar!!.setHomeButtonEnabled(true)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        container.setPadding(0, ToolbarUtils.statusBarHeight(this), 0, 0)
+        supportActionBar!!.apply {
+            title = getString(R.string.poets_list_title)
+            setHomeButtonEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -75,33 +74,8 @@ class CatalogActivity : AppCompatActivity(), LifecycleRegistryOwner {
         }
     }
 
-    private fun bindList(poetViewItems: List<PoetViewItem>) {
+    private fun bindList(poetViewItems: List<SelectablePoet>) {
         (poetRecyclerView.adapter as PoetListAdapter).poets = poetViewItems
     }
 }
 
-class PoetListAdapter : RecyclerView.Adapter<PoetListAdapter.ViewHolder>(), AutoUpdatableAdapter {
-    var poets by Delegates.observable<List<PoetViewItem>>(emptyList())
-    { property, oldValue, newValue ->
-        autoNotify(oldValue, newValue)
-        { a, b -> a == b }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder.create(parent)
-
-    override fun getItemCount(): Int = poets.count()
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(poets[position])
-
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        companion object {
-            fun create(parent: ViewGroup) = ViewHolder(parent.inflate(R.layout.item_poet))
-        }
-
-        fun bind(poetViewItem: PoetViewItem) {
-            itemView.poetName.text = (poetViewItem as PoetViewItem.CommonPoetViewItem).name
-        }
-    }
-
-}

@@ -21,6 +21,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 allprojects {
@@ -34,7 +37,7 @@ dependencies {
     ext.dagger_version = "2.10"
     ext.retrofitVersion = "2.2.0"
     ext.okhttpVersion = "3.7.0"
-    ext.supportLib = "26.0.1"
+    ext.supportLib = "26.0.2"
     ext.archComp = "1.0.0-alpha9"
 
 
@@ -76,11 +79,13 @@ dependencies {
     implementation "com.google.dagger:dagger:${dagger_version}"
     compileOnly 'org.glassfish:javax.annotation:10.0-b28'
 
-    implementation 'com.google.firebase:firebase-database:11.2.0'
+    implementation 'com.google.firebase:firebase-database:11.2.2'
     implementation 'io.realm:android-adapters:2.0.0'
     implementation 'com.github.bumptech.glide:glide:4.0.0'
     implementation 'com.github.hotchemi:khronos:0.1.0'
     implementation 'io.github.microutils:kotlin-logging:1.4.5'
+
+    implementation 'com.github.vicpinm:krealmextensions:1.1.1'
 }
 
 

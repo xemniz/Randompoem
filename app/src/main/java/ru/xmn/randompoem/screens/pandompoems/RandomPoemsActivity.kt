@@ -36,7 +36,6 @@ class RandomPoemsActivity : AppCompatActivity(), LifecycleRegistryOwner {
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
         supportActionBar!!.title = "Random poem"
-        toolbar.setPadding(0, statusBarHeight(this), 0, 0);
     }
 
     private fun setupViewModel() {
@@ -44,8 +43,9 @@ class RandomPoemsActivity : AppCompatActivity(), LifecycleRegistryOwner {
         randomPoemsViewModel.randomPoems.observe(this, Observer { bindUi(it) })
     }
 
-    fun bindUi(it: List<Poem>?) {
+    fun bindUi(it: List<SelectablePoetWithPoem>?) {
         listRandomPoems.setPoems(it ?: emptyList())
         listRandomPoems.onSwipe = { randomPoemsViewModel.requestNewPoems() }
+        listRandomPoems.ignorePoet = { poetId, ignore -> randomPoemsViewModel.ignorePoet(poetId, ignore) }
     }
 }
